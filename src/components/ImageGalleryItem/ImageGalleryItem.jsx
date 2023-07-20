@@ -18,7 +18,7 @@ export default ImageGalleryItem;
 ImageGalleryItem.propTypes = {
   dataItem: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    // webformatURL: PropTypes.string.isRequired,
+    webformatURL: PropTypes.string.isRequired,
     largeImageURL: PropTypes.string.isRequired,
   }).isRequired,
 };
