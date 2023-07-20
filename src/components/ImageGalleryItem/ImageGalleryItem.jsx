@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from "prop-types";
 
 const ImageGalleryItem = ({ dataItem, handlerOpenModal }) => {
   return (
@@ -13,3 +14,11 @@ const ImageGalleryItem = ({ dataItem, handlerOpenModal }) => {
 };
 
 export default ImageGalleryItem;
+
+ImageGalleryItem.propTypes = {
+  dataItem: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    webformatURL: PropTypes.string.isRequired,
+    largeImageURL: PropTypes.string.isRequired,
+  }).isRequired,
+};

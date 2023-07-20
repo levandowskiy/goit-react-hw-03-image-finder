@@ -1,6 +1,7 @@
 import { Component } from "react";
 import './Modal.css'
 import { createPortal } from "react-dom";
+import PropTypes from "prop-types";
 
 const modalRoot = document.querySelector("#modal-root");
 
@@ -27,7 +28,6 @@ class Modal extends Component {
 
   render() {
     const { largeImg} = this.props;
-    console.log(largeImg);
     return createPortal(
       <div onClick={this.handlerBackdropClose} className="backdrop">
         <div className="modal-wrapper">
@@ -41,3 +41,7 @@ class Modal extends Component {
 }
 
 export default Modal;
+
+Modal.propTypes = {
+  largeImg: PropTypes.string.isRequired,
+};
