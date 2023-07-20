@@ -1,83 +1,13 @@
-
-import { Component } from 'react';
-import fetchImg from '../../service/pixabay-api';
+import React, { Component } from 'react';
 import { Circles } from 'react-loader-spinner';
 import Button from '../Button';
 import './ImageGallery.css';
 import ImageGalleryItem from '../ImageGalleryItem';
+import PropTypes from "prop-types";
 
 class ImageGallery extends Component {
-  state = {
-    searchResult: null,
-    page: 1,
-    isLoading: false,
-    totalResult: 0,
-    errorMessage: '',
-  };
-
-  componentDidUpdate(prevProps) {
-    const { searchValue } = this.props;
-    const { page } = this.state;
-
-    if (prevProps.searchValue !== searchValue) {
-      this.setState({
-        isLoading: true,
-        searchResult: null,
-        errorMessage: '',
-      });
-
-      setTimeout(() => {
-        fetchImg(searchValue, page)
-          .then((searchResult) => {
-            if (searchResult.hits.length === 0) {
-              this.setState({
-                searchResult: null,
-                totalResult: 0,
-                errorMessage: 'Запит не знайдено',
-              });
-            } else {
-              this.setState({
-                searchResult: searchResult.hits,
-                totalResult: searchResult.totalHits,
-              });
-            }
-          })
-          .finally(() => {
-            this.setState({
-              isLoading: false,
-            });
-          });
-      }, 2000);
-    }
-  }
-
-  _handlerLoadMore = async () => {
-    await this.setState((prevState) => ({
-      page: prevState.page + 1,
-      isLoading: true,
-    }));
-
-    const { page } = this.state;
-    const { searchValue } = this.props;
-
-    setTimeout(() => {
-      fetchImg(searchValue, page)
-        .then((searchResult) => {
-          this.setState((prevState) => ({
-            searchResult: [...prevState.searchResult, ...searchResult.hits],
-          }));
-        })
-        .finally(() => {
-          this.setState({
-            isLoading: false,
-          });
-        });
-    }, 2000);
-  };
-
   render() {
-    const { handlerOpenModal } = this.props;
-    const { searchResult, totalResult, isLoading, errorMessage } = this.state;
+    const { handlerOpenModal, searchResult, totalResult, isLoading, errorMessage, handlerLoadMore } = this.props;
 
     return (
       <div className="gallery-wrapper">
@@ -97,7 +27,7 @@ class ImageGallery extends Component {
             totalResult !== 0 &&
             !isLoading &&
             searchResult.length < totalResult && (
-              <Button handlerLoadMore={this._handlerLoadMore} />
+              <Button handlerLoadMore={handlerLoadMore} />
             )}
 
           {isLoading && (
@@ -118,5 +48,14 @@ class ImageGallery extends Component {
     );
   }
 }
+
+ImageGallery.propTypes = {
+  searchResult: PropTypes.array,
+  totalResult: PropTypes.number,
+  isLoading: PropTypes.bool.isRequired,
+  errorMessage: PropTypes.string,
+  handlerOpenModal: PropTypes.func.isRequired,
+  handlerLoadMore: PropTypes.func.isRequired,
+};
 
 export default ImageGallery;
