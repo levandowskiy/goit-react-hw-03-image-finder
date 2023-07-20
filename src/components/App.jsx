@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Modal from './Modal';
-import fetchImg from '../service/pixabay-api'; // Підставте правильний шлях до файлу
+import fetchImg from '../service/pixabay-api'; 
 
 class App extends Component {
   state = {
