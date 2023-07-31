@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Modal from './Modal';
-import fetchImg from '../service/pixabay-api'; 
+import fetchImg from '../service/pixabay-api';
 
 class App extends Component {
   state = {
@@ -16,18 +16,24 @@ class App extends Component {
     page: 1,
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    const { searchValue, page } = this.state;
+
+    if (searchValue !== prevState.searchValue || page !== prevState.page) {
+      this.fetchImageData(searchValue, page);
+    }
+  }
+
   handlerFormSubmit = (searchValue) => {
     this.setState({
       searchValue,
+      page: 1,
     });
-
-    this.fetchImageData(searchValue, 1);
   };
 
   fetchImageData = (searchValue, page) => {
     this.setState({
       isLoading: true,
-      searchResult: null,
       errorMessage: '',
     });
 
@@ -40,10 +46,10 @@ class App extends Component {
             errorMessage: 'Запит не знайдено',
           });
         } else {
-          this.setState({
-            searchResult: searchResult.hits,
+          this.setState((prevState) => ({
+            searchResult: page === 1 ? searchResult.hits : [...prevState.searchResult, ...searchResult.hits],
             totalResult: searchResult.totalHits,
-          });
+          }));
         }
       })
       .catch((error) => {
@@ -74,26 +80,10 @@ class App extends Component {
     });
   };
 
-  _handlerLoadMore = async () => {
-    await this.setState((prevState) => ({
+  _handlerLoadMore = () => {
+    this.setState((prevState) => ({
       page: prevState.page + 1,
-      isLoading: true,
     }));
-
-    const { page, searchValue } = this.state;
-    setTimeout(() => {
-      fetchImg(searchValue, page)
-        .then((searchResult) => {
-          this.setState((prevState) => ({
-            searchResult: [...prevState.searchResult, ...searchResult.hits],
-          }));
-        })
-        .finally(() => {
-          this.setState({
-            isLoading: false,
-          });
-        });
-    }, 2000);
   };
 
   render() {
